@@ -1,6 +1,6 @@
-var express = require('express');
-var router = express.Router();
-var hash = require('pbkdf2-password')()
+import express from 'express' 
+import hash from 'pbkdf2-password'
+var authRouter = express.Router();
 
 // dummy database
 
@@ -45,15 +45,15 @@ function restrict(req, res, next) {
   }
 }
 
-router.get('/', function(req, res){
+authRouter.get('/', function(req, res){
     res.redirect('/auth/login');
 });
 
-router.get('/restricted', restrict, function(req, res){
+authRouter.get('/restricted', restrict, function(req, res){
   res.send('Wahoo! restricted area, click to <a href="/logout">logout</a>');
 });
 
-router.get('/logout', function(req, res){
+authRouter.get('/logout', function(req, res){
   // destroy the user's session to log them out
   // will be re-created next request
   req.session.destroy(function(){
@@ -61,11 +61,11 @@ router.get('/logout', function(req, res){
   });
 });
 
-router.get('/login', function(req, res){
-  res.render('login.ejs');
+authRouter.get('/login', function(req, res){
+  res.render('index.pug');
 });
 
-router.post('/login', function (req, res) {
+authRouter.post('/login', function (req, res) {
   authenticate(req.body.username, req.body.password, function(err, user){
     if (err) return next(err)
     if (user) {
@@ -90,4 +90,5 @@ router.post('/login', function (req, res) {
   });
 });
 
-module.exports = router;
+
+export default authRouter = authRouter

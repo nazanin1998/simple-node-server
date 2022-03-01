@@ -1,9 +1,14 @@
-var express = require('express');
-var router = express.Router();
-
+import express from 'express' 
+var indexRouter = express.Router();
+import * as App from '../views/components/app/index.jsx'
+// import ReactDOM from 'react-dom';
+// import ReactDOMServer from 'react-dom/server';
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+ indexRouter.get('/', function(req, res, next) {
+   console.log("baby")
+  // const aspp = ReactDOMServer.renderToString(App.App);
+  res.render('components/app/index.jsx');
 
-module.exports = router;
+  // ReactDOM.render(App.App(), { title: 'Express' });
+});
+export default indexRouter = indexRouter

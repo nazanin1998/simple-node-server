@@ -1,5 +1,5 @@
-var app = require('./app').app;
-var http = require('http');
+import app from "./app.js"
+import http from 'http'
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
