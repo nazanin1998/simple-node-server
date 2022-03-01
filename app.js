@@ -4,7 +4,6 @@ var express = require('express');
 var createError = require('http-errors');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
-
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
@@ -26,6 +25,8 @@ app.use(session({
   secret: 'shhhh, very secret'
 }));
 
+
+//middlewares
 app.use(function(req, res, next){
   var err = req.session.error;
   var msg = req.session.success;
@@ -37,7 +38,7 @@ app.use(function(req, res, next){
   next();
 });
 
-
+//routers
 app.use('/static', express.static(path.join(__dirname, 'public')));
 app.use('/static', express.static(path.join(__dirname, 'files')));
 
@@ -61,5 +62,4 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-module.exports = app;
+exports.app = app;

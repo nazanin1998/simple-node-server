@@ -2,7 +2,23 @@ var express = require('express');
 var router = express.Router();
 
 router.get('/', function(req, res, next) {
-  res.send('users list');
+  res.format({
+    html: function(){
+      res.send('<ul>' + users.map(function(user){
+        return '<li>' + user.name + '</li>';
+      }).join('') + '</ul>');
+    },
+
+    text: function(){
+      res.send(users.map(function(user){
+        return ' - ' + user.name + '\n';
+      }).join(''));
+    },
+
+    json: function(){
+      res.json(users);
+    }
+  });
 });
 
 router.post('/new', function(req, res, next) {
