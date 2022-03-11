@@ -59,24 +59,23 @@ app.use('/auth', authRouter);
 catch 404 and forward to error handler
 */
 app.use(function(req, res, next) {
-  console.log(res.locals.message)
   next(createError(404));
 });
 
 /*
 error handler
 */ 
-app.use(function(err, req, res, next) {
-  console.log(err.message)
-  console.log(err)
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.use(function(result, req, res, next) {
+
+  res.locals.message = result.message;
+  res.locals.error = req.app.get('env') === 'development' ? result : {};
   
-  res.status(err.status || 500);
+  res.status(result.status || 500);
   res.send({
-    'err': res.locals.error,
-    'message': res.locals.message
+    'status': result.status || 500,
+    'message': res.locals.message,
+    "data": result.data,
+    "success": result.success
   });
 });
- var appObject = {getApp:()=>  app, getDB:()=> db}
- export default appObject
+ export default app = app

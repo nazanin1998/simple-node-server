@@ -6,7 +6,6 @@ var myDB = {
     connectToServer: function (callback) {
         mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true }).then(function (db, err) {
             if (err || !db) {
-                console.log(err);
                 return callback(err);
             }
 

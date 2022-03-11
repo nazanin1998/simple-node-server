@@ -1,14 +1,12 @@
 import myDB from './database/db_connection.js'
-import appObject from "./app.js"
+import app from "./app.js"
 import http from 'http'
 
 /*
 connect DB
 */
-myDB.connectToServer(function(err){
-});
+myDB.connectToServer(function(err){});
 
-var app = appObject.getApp();
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 app.set('address', '10.10.10.10');
