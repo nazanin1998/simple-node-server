@@ -47,17 +47,31 @@ router.post('/register', function (req, res, next) {
 });
 
 
-router.put('/edit:id', function (req, res) {
+router.put('/edit:id', async (req, res, next) => {
+  // try {
+  //   myValidators.objectIDValidator(req.params.id, next);
+  //   const user = await User.findById(req.params.id);
+  //   errorHandlers.notFoundHandler(user, next);
+  //   res.send({ success: true, user: user });
+  // } catch (message) {
+  //   return next({ message: message, status: 500 });
+  // }
   res.send('edit user')
 });
 
-router.delete('/delete:id', function (req, res) {
-  res.send('delete user')
+router.delete('/delete/:id', async (req, res, next) => {
+  try {
+    myValidators.objectIDValidator(req.params.id, next);
+    const user = await User.findById(req.params.id);
+    errorHandlers.notFoundHandler(user, next);
+    await user.delete()
+    res.send({ success: true});
+  } catch (message) {
+    return next({ message: message, status: 500 });
+  }
 })
 
 router.use(responseHandler)
-
 router.use(errorHandlers.insertErrorHandler)
-
 
 export default router = router;
