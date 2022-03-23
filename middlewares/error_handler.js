@@ -28,6 +28,13 @@ function insertErrorHandler(err, req, res, next) {
     }
 };
 
+function requiredFieldsValidation(items, next) {
+    for (let i = 0; i < items.length; i += 1) {
+        if (!items[i]) {
+            throw next({ message: "required fields are null", status: 400 });
+        }
+    }
+}
 function notFoundHandler(obj, next) {
     if (!obj) {
         throw next({ message: "Not found", status: 404 });
@@ -36,6 +43,7 @@ function notFoundHandler(obj, next) {
 
 let errorHandlers = {
     insertErrorHandler: insertErrorHandler,
-    notFoundHandler: notFoundHandler
+    notFoundHandler: notFoundHandler,
+    requiredFieldsValidation: requiredFieldsValidation
 }
 export default errorHandlers = errorHandlers;

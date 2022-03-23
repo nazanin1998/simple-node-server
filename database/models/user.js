@@ -34,9 +34,28 @@ var UserSchema = new Schema({
   },
   tweets: [{ type: Schema.Types.ObjectId, ref: 'Tweet' }],
   comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
-  registerationDate: { type: Date, default: Date.now },
-  birthDate: Date,
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 var User = mongoose.model('User', UserSchema);
+
+User.Helpers = {
+  isAdminAccessLevel: (adminAccess) => {
+    return (adminAccess == ADMIN_ACCESS_ADMIN);
+  },
+  deleteFieldsOnInsert: (user) => {
+    delete (user._id);
+    delete (user.createdAt);
+    delete (user.updatedAt);
+    delete (user.comments);
+    delete (user.tweets);
+     return user;
+  },
+  deleteFieldsOnEdit: (user) => {
+    user = User.Helpers.deleteFieldsOnInsert(user)
+    delete (user.password);
+    return user;
+  },
+}
 
 export default User;
