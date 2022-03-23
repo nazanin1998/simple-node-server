@@ -75,7 +75,7 @@ app.use(function(result, req, res, next) {
     'status': result.status || 500,
     'message': res.locals.message,
     "data": result.data,
-    "success": result.success
+    "success": result.success || (result.status == 200)
   });
 });
  export default app = app
