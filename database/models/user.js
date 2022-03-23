@@ -5,25 +5,27 @@ var UserSchema = new Schema({
   firstName: {
     type: String,
     required: { values: true, message: 'firstName Is Required !' },
-    maxlength: 100
+    maxlength: [80, 'firstName should be 80 charachter at most'],
+    minlength: [1, 'firstName should be 1 charachter at least'],
   },
   lastName: {
     type: String,
-    required: {
-      values: true,
-      message: 'lastname Is Required !'
-    },
-    maxlength: 100
+    required: { values: true, message: 'lastname Is Required !' },
+    maxlength: [80, 'lastName should be 80 charachter at most'],
+    minlength: [1, 'lastName should be 1 charachter at least'],
   },
   username: {
     type: String,
     required: { values: true, message: 'username Is Required !' },
     unique: true,
-    maxlength: 100
+    maxlength: [40, 'username should be 40 charachter at most'],
+    minlength: [8, 'username should be 8 charachter at least'],
   },
   password: {
     type: String,
-    required: { values: true, message: 'password Is Required !' }
+    required: { values: true, message: 'password Is Required !' },
+    maxlength: [40, 'password should be 40 charachter at most'],
+    minlength: [8, 'password should be 8 charachter at least'],
   },
   profileImage: { type: Array },
   gender: {
