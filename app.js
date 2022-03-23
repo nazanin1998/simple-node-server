@@ -1,14 +1,17 @@
-import path from 'path' 
-import {fileURLToPath} from 'url';
-import logger from 'morgan' 
-import express from 'express' 
-import createError from 'http-errors' 
-import session from 'express-session' 
-import cookieParser from 'cookie-parser' 
-import indexRouter from './routes/index.js' 
-import usersRouter from './routes/users_router.js' 
-import authRouter from './routes/auth.js' 
+import path from 'path'
+import { fileURLToPath } from 'url';
+import logger from 'morgan'
+import express from 'express'
+import createError from 'http-errors'
+import session from 'express-session'
+import cookieParser from 'cookie-parser'
+import indexRouter from './routes/index.js'
+import usersRouter from './routes/users_router.js'
+import authRouter from './routes/auth_router.js'
+import authenticationMiddleware from './middlewares/auth_middleware'
+import dotenv from 'dotenv'
 
+dotenv.config()
 var app = express();
 
 /*
@@ -33,7 +36,7 @@ app.use(session({
   secret: 'shhhh, very secret'
 }));
 
-app.use(function(req, res, next){
+app.use(function (req, res, next) {
   var err = req.session.error;
   var msg = req.session.success;
   delete req.session.error;
@@ -43,6 +46,8 @@ app.use(function(req, res, next){
   if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
   next();
 });
+
+app.use(authenticationMiddleware)
 
 /*
 routers
@@ -58,18 +63,18 @@ app.use('/auth', authRouter);
 /*
 catch 404 and forward to error handler
 */
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 /*
 error handler
-*/ 
-app.use(function(result, req, res, next) {
+*/
+app.use(function (result, req, res, next) {
 
   res.locals.message = result.message;
   res.locals.error = req.app.get('env') === 'development' ? result : {};
-  
+
   res.status(result.status || 500);
   res.send({
     'status': result.status || 500,
@@ -78,4 +83,4 @@ app.use(function(result, req, res, next) {
     "success": result.success || (result.status == 200)
   });
 });
- export default app = app
+export default app = app

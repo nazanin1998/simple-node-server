@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 var Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
+  token: { type: String },
   firstName: {
     type: String,
     required: { values: true, message: 'firstName Is Required !' },
@@ -24,7 +25,7 @@ var UserSchema = new Schema({
   password: {
     type: String,
     required: { values: true, message: 'password Is Required !' },
-    maxlength: [40, 'password should be 40 charachter at most'],
+    maxlength: [100, 'password should be 100 charachter at most'],
     minlength: [8, 'password should be 8 charachter at least'],
   },
   profileImage: { type: Array },
@@ -45,6 +46,7 @@ User.Helpers = {
   },
   deleteFieldsOnInsert: (user) => {
     delete (user._id);
+    delete (user.token);
     delete (user.createdAt);
     delete (user.updatedAt);
     delete (user.comments);

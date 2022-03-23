@@ -18,8 +18,9 @@ router.post('/login', async (req, res, next) => {
     if (!isValidPassword) {
       return next({ message: "Wrong password!", status: 400 })
     } else {
-      //todo =generate token , may be we should save the token, or may be not
-      return next({ data: "logged in", success: true })
+      matchedUser.token = helperFunctions.generateJWT({ userId: matchedUser._id })
+      await matchedUser.save();
+      return next({ data: { token: matchedUser.token }, success: true })
     }
   } catch (message) {
     return next({ message: message, status: 500 })
