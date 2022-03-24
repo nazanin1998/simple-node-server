@@ -5,10 +5,10 @@ import express from 'express'
 import createError from 'http-errors'
 import session from 'express-session'
 import cookieParser from 'cookie-parser'
-import indexRouter from './routes/index.js'
-import usersRouter from './routes/users_router.js'
-import authRouter from './routes/auth_router.js'
-import authenticationMiddleware from './middlewares/auth_middleware'
+import UserRouter from './routes/users_router.js'
+import AuthRouter from './routes/auth_router.js'
+import authMiddleware from './middlewares/auth_middleware'
+import responseMiddleware from './middlewares/response_middleware'
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -47,7 +47,7 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use(authenticationMiddleware)
+app.use( authMiddleware.authenticationMiddleware)
 
 /*
 routers
@@ -56,9 +56,9 @@ app.use('/static', express.static(path.join(__dirname, 'public')));
 app.use('/static', express.static(path.join(__dirname, 'files')));
 
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/auth', authRouter);
+// app.use('/', indexRouter);
+app.use('/users', new UserRouter().router);
+app.use('/auth', new AuthRouter().router);
 
 /*
 catch 404 and forward to error handler
@@ -70,17 +70,5 @@ app.use(function (req, res, next) {
 /*
 error handler
 */
-app.use(function (result, req, res, next) {
-
-  res.locals.message = result.message;
-  res.locals.error = req.app.get('env') === 'development' ? result : {};
-
-  res.status(result.status || 500);
-  res.send({
-    'status': result.status || 500,
-    'message': res.locals.message,
-    "data": result.data,
-    "success": result.success || (result.status == 200)
-  });
-});
+app.use(responseMiddleware);
 export default app = app

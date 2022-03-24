@@ -1,28 +1,50 @@
-import helperFunctions from '../utils/helper_functions'
-import errorHandler from '../middlewares/error_handler'
-import User from '../database/models/user.js'
-import e from 'express';
+import JWTHelper from '../utils/jwt_helper'
+import User from '../models/user.js'
+import AuthRouter from '../routes/auth_router';
 
-function authenticationMiddleware(req, res, next) {
-    const token = req.headers.token
 
-    if (token) {
-        try {
-            helperFunctions.decodeJWT(token, async (err, decoded) => {
-                if (err) {
-                    return next({ message: err.message, status: 401 })
-                }
-                const user = await User.findById(decoded.userId);
-                if (!user) {
-                    next({ message: "user not exist", status: 401 })
-                }
-                req.user = user
-            });
-        } catch (message) {
-            next({ message: message })
-        }
+async function authenticationMiddleware(req, res, next) {
+    let token = req.headers.authorization
+    if (!token) {
+        return next()
     }
-    next()
+    try {
+        const decoded = await JWTHelper.decodeJWT(token);
+        const user = await User.findById(decoded.userId);
+        if (!user || user.token != token) {
+            return next({ message: "token is not valid", status: 403 })
+        }
+        req.body.user = user;
+        next()
+    } catch (message) {
+        next({ message: message, status: 401 })
+    }
 }
 
-export default authenticationMiddleware = authenticationMiddleware
+
+function authorizationMiddleware(req, res, next) {
+    if (!req.body.user) {
+        next({ message: "unauthorized", status: 401 })
+    } else {
+        next()
+    }
+}
+
+async function refreshTokenMiddleware(data, req, res, next) {
+    if (data.status == 200 || data.success) {
+        try {
+            await new AuthRouter().refreshToken(req.body.user, res);
+            return next(data);
+        } catch (message) {
+            return next({ message: message, status: 500 })
+        }
+    }
+    return next(data);
+}
+
+let authMiddleware = {
+    authorizationMiddleware: authorizationMiddleware,
+    refreshTokenMiddleware: refreshTokenMiddleware,
+    authenticationMiddleware: authenticationMiddleware
+}
+export default authMiddleware = authMiddleware

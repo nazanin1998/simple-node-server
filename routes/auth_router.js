@@ -1,33 +1,66 @@
 import express from 'express'
-import hash from 'pbkdf2-password'
-import User from '../database/models/user'
-import responseHandler from '../middlewares/response_handler'
-import errorHandlers from '../middlewares/error_handler'
-import myValidators from '../middlewares/validators'
+import User from '../models/user'
+import validatorMiddlewares from '../middlewares/validator_middlewares'
 import helperFunctions from '../utils/helper_functions'
+import JWTHelper from '../utils/jwt_helper'
+export default class AuthRouter {
+  constructor() {
 
-var router = express.Router();
+    this.router = express.Router();
 
+    this.router.post('/register', async (req, res, next) => {
+      console.log("d")
+      this.register(req, res, next)
+    });
+    this.router.post('/login', async (req, res, next) => {
+      this.login(req, res, next)
+    });
 
-router.post('/login', async (req, res, next) => {
-  try {
-    errorHandlers.requiredFieldsValidation([req.body.username, req.body.password], next);
-    const matchedUser = await User.findOne({ username: req.body.username });
-    errorHandlers.notFoundHandler(matchedUser, next);
-    const isValidPassword = await helperFunctions.isValidHash(req.body.password, matchedUser.password);
-    if (!isValidPassword) {
-      return next({ message: "Wrong password!", status: 400 })
-    } else {
-      matchedUser.token = helperFunctions.generateJWT({ userId: matchedUser._id })
-      await matchedUser.save();
-      return next({ data: { token: matchedUser.token }, success: true })
-    }
-  } catch (message) {
-    return next({ message: message, status: 500 })
+    this.router.use(validatorMiddlewares.insertValidator)
   }
-});
 
-router.use(responseHandler)
-router.use(errorHandlers.insertErrorHandler)
+  async login(req, res, next) {
+    try {
+      validatorMiddlewares.requiredFieldsValidator([req.body.username, req.body.password], next);
+      const matchedUser = await User.findOne({ username: req.body.username });
+      validatorMiddlewares.notFoundValiadtor(matchedUser, next);
+      const isValidPassword = await helperFunctions.isValidHash(req.body.password, matchedUser.password);
+      if (!isValidPassword) {
+        return next({ message: "Wrong password!", status: 400 })
+      } else {
+        await this.refreshToken(matchedUser, res)
+        return next({ success: true })
+      }
+    } catch (message) {
+      return next({ message: message, status: 500 })
+    }
+  }
 
-export default router = router
+  async refreshToken(user, res){
+    console.log("refresh token")
+    user.token = JWTHelper.generateJWT({ userId: user._id })
+    console.log(user.token)
+    await user.save();
+    console.log("user saved")
+    res.set("Authorization", user.token)
+    console.log("user saved")
+  }
+
+  async register(req, res, next) {
+    try {
+      req.body = User.Helpers.deleteFieldsOnInsert(req.body)
+      const user = insertValidator.userValidator(req.body, next)
+
+      user.password = await helperFunctions.convertStrToHash(user.password)
+      User.collection.insertOne(user, { runValidators: true }, function (err, user) {
+        if (err) {
+          next(err)
+        } else {
+          next({ success: true, data: user });
+        }
+      });
+    } catch (message) {
+      return next({ message: message, status: 500 });
+    }
+  }
+}

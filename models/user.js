@@ -39,10 +39,16 @@ var UserSchema = new Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 var User = mongoose.model('User', UserSchema);
-
+let currentUser;
 User.Helpers = {
   isAdminAccessLevel: (adminAccess) => {
     return (adminAccess == ADMIN_ACCESS_ADMIN);
+  },
+  setUser: (newUser)=>{
+    currentUser = newUser;
+  },
+  getUser: ()=>{
+    return currentUser;
   },
   deleteFieldsOnInsert: (user) => {
     delete (user._id);

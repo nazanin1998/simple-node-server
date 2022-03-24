@@ -27,6 +27,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.2.4",
     "morgan": "~1.9.1",
+    "njwt": "^0.4.1",
     "nodemon": "^2.0.15",
     "pbkdf2-password": "^1.2.1",
     "pug": "2.0.0-beta11",

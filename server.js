@@ -1,11 +1,11 @@
-import myDB from './database/db_connection.js'
+import myDB from './database/database'
 import app from "./app.js"
 import http from 'http'
 
 /*
 connect DB
 */
-myDB.connectToServer(function(err){});
+myDB.connectToServer();
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
