@@ -9,7 +9,6 @@ export default class AuthRouter {
     this.router = express.Router();
 
     this.router.post('/register', async (req, res, next) => {
-      console.log("d")
       this.register(req, res, next)
     });
     this.router.post('/login', async (req, res, next) => {
@@ -37,13 +36,9 @@ export default class AuthRouter {
   }
 
   async refreshToken(user, res){
-    console.log("refresh token")
     user.token = JWTHelper.generateJWT({ userId: user._id })
-    console.log(user.token)
     await user.save();
-    console.log("user saved")
     res.set("Authorization", user.token)
-    console.log("user saved")
   }
 
   async register(req, res, next) {

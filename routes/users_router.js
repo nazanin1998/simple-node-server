@@ -3,6 +3,7 @@ import User from '../models/user'
 import validatorMiddlewares from '../middlewares/validator_middlewares'
 import helperFunctions from '../utils/helper_functions'
 import authMiddleware from '../middlewares/auth_middleware';
+import { token } from 'morgan';
 
 export default class UserRouter {
   constructor() {
@@ -26,8 +27,7 @@ export default class UserRouter {
 
   async findAll(req, res, next) {
     try {
-      const users = await User.find({});
-      console.log("baby called")
+      const users = await User.find({}, { token: 0 });
       next({ success: true, data: users })
     } catch (message) {
       return next({ message: message, status: 500 });
@@ -36,7 +36,7 @@ export default class UserRouter {
   async findOne(req, res, next) {
     try {
       validatorMiddlewares.objectIDValidator(req.params.id, next);
-      const user = await User.findById(req.params.id);
+      const user = await User.findById(req.params.id,{ token: 0 });
       validatorMiddlewares.notFoundValiadtor(user, next);
       next({ success: true, data: user })
     } catch (message) {
