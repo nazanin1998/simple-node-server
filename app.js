@@ -47,13 +47,12 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use( authMiddleware.authenticationMiddleware)
+app.use(authMiddleware.authenticationMiddleware)
 
 /*
 routers
 */
 app.use('/static', express.static(path.join(__dirname, 'public')));
-app.use('/static', express.static(path.join(__dirname, 'files')));
 
 
 // app.use('/', indexRouter);
