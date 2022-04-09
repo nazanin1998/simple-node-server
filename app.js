@@ -13,7 +13,7 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 var app = express();
-
+print("bab")
 /*
 view engine setup
 */
